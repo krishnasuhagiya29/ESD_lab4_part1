@@ -463,13 +463,15 @@ _CY	=	0x00d7
 	.area DSEG    (DATA)
 _eebytew_PARM_2:
 	.ds 1
-_main_addr_131072_47:
+_main_addr_131072_92:
 	.ds 2
-_main_start_addr_131072_47:
+_main_addr1_131072_92:
 	.ds 2
-_main_end_addr_131072_47:
+_main_start_addr_131072_92:
 	.ds 2
-_main_data_131072_47:
+_main_end_addr_131072_92:
+	.ds 2
+_main_data_131072_92:
 	.ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram
@@ -496,6 +498,8 @@ __start__stack:
 ; bit data
 ;--------------------------------------------------------
 	.area BSEG    (BIT)
+_eebyter_sloc0_1_0:
+	.ds 1
 ;--------------------------------------------------------
 ; paged external ram data
 ;--------------------------------------------------------
@@ -986,19 +990,143 @@ _eebytew:
 	push	ar7
 	push	ar6
 	lcall	_I2C_Start
-;	main.c:172: I2C_Write_Byte((unsigned char)0xA0);
+	pop	ar6
+	pop	ar7
+;	main.c:172: if(addr <= 0xFF)
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	clr	a
+	subb	a,r7
+	jc	00122$
+;	main.c:174: I2C_Write_Byte((unsigned char)0xA0);
 	mov	dpl,#0xa0
+	push	ar7
+	push	ar6
 	lcall	_I2C_Write_Byte
 	pop	ar6
 	pop	ar7
-;	main.c:173: I2C_Write_Byte((unsigned char)addr);
+	ljmp	00123$
+00122$:
+;	main.c:177: if(addr <= 0x1FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x01
+	subb	a,r7
+	jc	00119$
+;	main.c:178: I2C_Write_Byte((unsigned char)0xA2);
+	mov	dpl,#0xa2
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	ljmp	00123$
+00119$:
+;	main.c:181: if(addr <= 0x2FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x02
+	subb	a,r7
+	jc	00116$
+;	main.c:182: I2C_Write_Byte((unsigned char)0xA4);
+	mov	dpl,#0xa4
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	ljmp	00123$
+00116$:
+;	main.c:185: if(addr <= 0x3FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x03
+	subb	a,r7
+	jc	00113$
+;	main.c:186: I2C_Write_Byte((unsigned char)0xA6);
+	mov	dpl,#0xa6
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00113$:
+;	main.c:189: if(addr <= 0x4FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x04
+	subb	a,r7
+	jc	00110$
+;	main.c:190: I2C_Write_Byte((unsigned char)0xA8);
+	mov	dpl,#0xa8
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00110$:
+;	main.c:193: if(addr <= 0x5FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x05
+	subb	a,r7
+	jc	00107$
+;	main.c:194: I2C_Write_Byte((unsigned char)0xAA);
+	mov	dpl,#0xaa
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00107$:
+;	main.c:197: if(addr <= 0x6FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x06
+	subb	a,r7
+	jc	00104$
+;	main.c:198: I2C_Write_Byte((unsigned char)0xAC);
+	mov	dpl,#0xac
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00104$:
+;	main.c:201: if(addr <= 0x7FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x07
+	subb	a,r7
+	jc	00123$
+;	main.c:202: I2C_Write_Byte((unsigned char)0xAE);
+	mov	dpl,#0xae
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+00123$:
+;	main.c:211: I2C_Write_Byte((unsigned char)addr);
 	mov	dpl,r6
 	lcall	_I2C_Write_Byte
-;	main.c:174: I2C_Write_Byte(databyte);
+;	main.c:212: I2C_Write_Byte(databyte);
 	mov	dpl,_eebytew_PARM_2
 	lcall	_I2C_Write_Byte
-;	main.c:175: I2C_Stop();
-;	main.c:177: }
+;	main.c:213: I2C_Stop();
+;	main.c:215: }
 	ljmp	_I2C_Stop
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'eebyter'
@@ -1006,64 +1134,281 @@ _eebytew:
 ;addr                      Allocated to registers r6 r7 
 ;rec                       Allocated to registers r7 
 ;------------------------------------------------------------
-;	main.c:179: unsigned char eebyter(unsigned int addr)
+;	main.c:217: unsigned char eebyter(unsigned int addr)
 ;	-----------------------------------------
 ;	 function eebyter
 ;	-----------------------------------------
 _eebyter:
 	mov	r6,dpl
 	mov	r7,dph
-;	main.c:182: I2C_Start();
+;	main.c:220: I2C_Start();
 	push	ar7
 	push	ar6
 	lcall	_I2C_Start
-;	main.c:183: I2C_Write_Byte((unsigned char)0xA0);
+	pop	ar6
+	pop	ar7
+;	main.c:221: if(addr <= 0xFF)
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	clr	a
+	subb	a,r7
+	mov	_eebyter_sloc0_1_0,c
+	jc	00122$
+;	main.c:223: I2C_Write_Byte((unsigned char)0xA0);
 	mov	dpl,#0xa0
+	push	ar7
+	push	ar6
 	lcall	_I2C_Write_Byte
 	pop	ar6
 	pop	ar7
-;	main.c:184: I2C_Write_Byte((unsigned char)addr);
-	mov	dpl,r6
+	ljmp	00123$
+00122$:
+;	main.c:226: if(addr <= 0x1FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x01
+	subb	a,r7
+	jc	00119$
+;	main.c:227: I2C_Write_Byte((unsigned char)0xA2);
+	mov	dpl,#0xa2
+	push	ar7
+	push	ar6
 	lcall	_I2C_Write_Byte
-;	main.c:185: RepeatedStartI2c();
+	pop	ar6
+	pop	ar7
+	ljmp	00123$
+00119$:
+;	main.c:230: if(addr <= 0x2FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x02
+	subb	a,r7
+	jc	00116$
+;	main.c:231: I2C_Write_Byte((unsigned char)0xA4);
+	mov	dpl,#0xa4
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00116$:
+;	main.c:234: if(addr <= 0x3FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x03
+	subb	a,r7
+	jc	00113$
+;	main.c:235: I2C_Write_Byte((unsigned char)0xA6);
+	mov	dpl,#0xa6
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00113$:
+;	main.c:238: if(addr <= 0x4FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x04
+	subb	a,r7
+	jc	00110$
+;	main.c:239: I2C_Write_Byte((unsigned char)0xA8);
+	mov	dpl,#0xa8
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00110$:
+;	main.c:242: if(addr <= 0x5FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x05
+	subb	a,r7
+	jc	00107$
+;	main.c:243: I2C_Write_Byte((unsigned char)0xAA);
+	mov	dpl,#0xaa
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00107$:
+;	main.c:246: if(addr <= 0x6FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x06
+	subb	a,r7
+	jc	00104$
+;	main.c:247: I2C_Write_Byte((unsigned char)0xAC);
+	mov	dpl,#0xac
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+	sjmp	00123$
+00104$:
+;	main.c:250: if(addr <= 0x7FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x07
+	subb	a,r7
+	jc	00123$
+;	main.c:251: I2C_Write_Byte((unsigned char)0xAE);
+	mov	dpl,#0xae
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+	pop	ar6
+	pop	ar7
+00123$:
+;	main.c:261: I2C_Write_Byte((unsigned char)addr);
+	mov	dpl,r6
+	push	ar7
+	push	ar6
+	lcall	_I2C_Write_Byte
+;	main.c:262: RepeatedStartI2c();
 	lcall	_RepeatedStartI2c
-;	main.c:186: I2C_Write_Byte((unsigned char)0xA1);
+	pop	ar6
+	pop	ar7
+;	main.c:263: if(addr <= 0xFF)
+	jb	_eebyter_sloc0_1_0,00145$
+;	main.c:265: I2C_Write_Byte((unsigned char)0xA1);
 	mov	dpl,#0xa1
 	lcall	_I2C_Write_Byte
-;	main.c:187: rec=I2C_Read_Byte();
+	sjmp	00146$
+00145$:
+;	main.c:268: if(addr <= 0x1FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x01
+	subb	a,r7
+	jc	00142$
+;	main.c:269: I2C_Write_Byte((unsigned char)0xA3);
+	mov	dpl,#0xa3
+	lcall	_I2C_Write_Byte
+	sjmp	00146$
+00142$:
+;	main.c:272: if(addr <= 0x2FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x02
+	subb	a,r7
+	jc	00139$
+;	main.c:273: I2C_Write_Byte((unsigned char)0xA5);
+	mov	dpl,#0xa5
+	lcall	_I2C_Write_Byte
+	sjmp	00146$
+00139$:
+;	main.c:276: if(addr <= 0x3FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x03
+	subb	a,r7
+	jc	00136$
+;	main.c:277: I2C_Write_Byte((unsigned char)0xA7);
+	mov	dpl,#0xa7
+	lcall	_I2C_Write_Byte
+	sjmp	00146$
+00136$:
+;	main.c:280: if(addr <= 0x4FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x04
+	subb	a,r7
+	jc	00133$
+;	main.c:281: I2C_Write_Byte((unsigned char)0xA9);
+	mov	dpl,#0xa9
+	lcall	_I2C_Write_Byte
+	sjmp	00146$
+00133$:
+;	main.c:284: if(addr <= 0x5FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x05
+	subb	a,r7
+	jc	00130$
+;	main.c:285: I2C_Write_Byte((unsigned char)0xAB);
+	mov	dpl,#0xab
+	lcall	_I2C_Write_Byte
+	sjmp	00146$
+00130$:
+;	main.c:288: if(addr <= 0x6FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x06
+	subb	a,r7
+	jc	00127$
+;	main.c:289: I2C_Write_Byte((unsigned char)0xAD);
+	mov	dpl,#0xad
+	lcall	_I2C_Write_Byte
+	sjmp	00146$
+00127$:
+;	main.c:292: if(addr <= 0x7FF){
+	clr	c
+	mov	a,#0xff
+	subb	a,r6
+	mov	a,#0x07
+	subb	a,r7
+	jc	00146$
+;	main.c:293: I2C_Write_Byte((unsigned char)0xAF);
+	mov	dpl,#0xaf
+	lcall	_I2C_Write_Byte
+00146$:
+;	main.c:303: rec=I2C_Read_Byte();
 	lcall	_I2C_Read_Byte
 	mov	r7,dpl
-;	main.c:188: I2C_Send_ACK();
+;	main.c:304: I2C_Send_ACK();
 	push	ar7
 	lcall	_I2C_Send_ACK
-;	main.c:189: I2C_Stop();
+;	main.c:305: I2C_Stop();
 	lcall	_I2C_Stop
 	pop	ar7
-;	main.c:190: return rec;
+;	main.c:306: return rec;
 	mov	dpl,r7
-;	main.c:191: }
+;	main.c:307: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;rx                        Allocated to registers 
-;addr                      Allocated with name '_main_addr_131072_47'
-;start_addr                Allocated with name '_main_start_addr_131072_47'
-;end_addr                  Allocated with name '_main_end_addr_131072_47'
-;data                      Allocated with name '_main_data_131072_47'
+;addr                      Allocated with name '_main_addr_131072_92'
+;addr1                     Allocated with name '_main_addr1_131072_92'
+;start_addr                Allocated with name '_main_start_addr_131072_92'
+;end_addr                  Allocated with name '_main_end_addr_131072_92'
+;data                      Allocated with name '_main_data_131072_92'
 ;digit                     Allocated to registers r1 r2 
 ;ch                        Allocated to registers r4 
 ;rd                        Allocated to registers r5 
 ;i                         Allocated to registers r0 r1 
 ;------------------------------------------------------------
-;	main.c:193: void main(void)
+;	main.c:309: void main(void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	main.c:196: I2C_init();					// Initialize i2c pins
+;	main.c:312: I2C_init();					// Initialize i2c pins
 	lcall	_I2C_init
-;	main.c:197: printf("Starting I2C application\r\n");
+;	main.c:313: printf("Starting I2C application\r\n");
 	mov	a,#___str_0
 	push	acc
 	mov	a,#(___str_0 >> 8)
@@ -1074,7 +1419,7 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:198: printf("Help menu:\r\n");
+;	main.c:314: printf("Help menu:\r\n");
 	mov	a,#___str_1
 	push	acc
 	mov	a,#(___str_1 >> 8)
@@ -1085,7 +1430,7 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:199: printf("'w': Enter an EEPROM address in hex to write data at and byte data\r\n");
+;	main.c:315: printf("'w': Enter an EEPROM address in hex to write data at and byte data\r\n");
 	mov	a,#___str_2
 	push	acc
 	mov	a,#(___str_2 >> 8)
@@ -1096,7 +1441,7 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:200: printf("'r': Enter an EEPROM address in hex to read data from\r\n");
+;	main.c:316: printf("'r': Enter an EEPROM address in hex to read data from\r\n");
 	mov	a,#___str_3
 	push	acc
 	mov	a,#(___str_3 >> 8)
@@ -1107,7 +1452,7 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:201: printf("'h': Enter an EEPROM start and end addresses to dump the data\r\n");
+;	main.c:317: printf("'h': Enter an EEPROM start and end addresses to dump the data\r\n");
 	mov	a,#___str_4
 	push	acc
 	mov	a,#(___str_4 >> 8)
@@ -1118,7 +1463,7 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:202: printf("'e': Reset EEPROM\r\n");
+;	main.c:318: printf("'e': Reset EEPROM\r\n");
 	mov	a,#___str_5
 	push	acc
 	mov	a,#(___str_5 >> 8)
@@ -1129,33 +1474,35 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:204: while(1)
+;	main.c:320: while(1)
 	clr	a
 	mov	r6,a
 	mov	r7,a
-	mov	_main_start_addr_131072_47,a
-	mov	(_main_start_addr_131072_47 + 1),a
+	mov	_main_addr1_131072_92,a
+	mov	(_main_addr1_131072_92 + 1),a
+	mov	_main_start_addr_131072_92,a
+	mov	(_main_start_addr_131072_92 + 1),a
 00212$:
-;	main.c:206: unsigned int addr, start_addr, end_addr = 0;
+;	main.c:322: unsigned int addr, addr1, start_addr, end_addr = 0;
 	clr	a
-	mov	_main_end_addr_131072_47,a
-	mov	(_main_end_addr_131072_47 + 1),a
-;	main.c:207: unsigned int data = 0;
-	mov	_main_data_131072_47,a
-	mov	(_main_data_131072_47 + 1),a
-;	main.c:209: char ch = getchar();
+	mov	_main_end_addr_131072_92,a
+	mov	(_main_end_addr_131072_92 + 1),a
+;	main.c:323: unsigned int data = 0;
+	mov	_main_data_131072_92,a
+	mov	(_main_data_131072_92 + 1),a
+;	main.c:325: char ch = getchar();
 	push	ar7
 	push	ar6
 	lcall	_getchar
-	mov	r0,dpl
-;	main.c:210: putchar(ch);
-	mov	ar1,r0
-	mov	r3,#0x00
+	mov	r4,dpl
+;	main.c:326: putchar(ch);
+	mov	ar1,r4
+	mov	r5,#0x00
 	mov	dpl,r1
-	mov	dph,r3
-	push	ar0
+	mov	dph,r5
+	push	ar4
 	lcall	_putchar
-;	main.c:211: printf("\r\n");
+;	main.c:327: printf("\r\n");
 	mov	a,#___str_6
 	push	acc
 	mov	a,#(___str_6 >> 8)
@@ -1166,22 +1513,22 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-	pop	ar0
+	pop	ar4
 	pop	ar6
 	pop	ar7
-;	main.c:212: switch(ch)
-	cjne	r0,#0x68,00485$
+;	main.c:328: switch(ch)
+	cjne	r4,#0x68,00485$
 	ljmp	00163$
 00485$:
-	cjne	r0,#0x72,00486$
+	cjne	r4,#0x72,00486$
 	ljmp	00142$
 00486$:
-	cjne	r0,#0x77,00487$
+	cjne	r4,#0x77,00487$
 	sjmp	00488$
 00487$:
 	ljmp	00209$
 00488$:
-;	main.c:215: printf("Enter the address location to store the data at : \r\n");
+;	main.c:331: printf("Enter the address location to store the data at : \r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_7
@@ -1196,74 +1543,74 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:216: while (1) {
+;	main.c:332: while (1) {
 00117$:
-;	main.c:217: ch = getchar();
+;	main.c:333: ch = getchar();
 	push	ar7
 	push	ar6
 	lcall	_getchar
-	mov	r2,dpl
+	mov	r4,dpl
 	pop	ar6
 	pop	ar7
-;	main.c:219: if ((int)ch == 13) { // Check until carriage return
-	mov	ar1,r2
-	mov	r3,#0x00
+;	main.c:335: if ((int)ch == 13) { // Check until carriage return
+	mov	ar1,r4
+	mov	r5,#0x00
 	cjne	r1,#0x0d,00489$
-	cjne	r3,#0x00,00489$
+	cjne	r5,#0x00,00489$
 	sjmp	00118$
 00489$:
-;	main.c:223: if ((ch >= '0') && (ch <= '9')) {
-	cjne	r2,#0x30,00490$
+;	main.c:339: if ((ch >= '0') && (ch <= '9')) {
+	cjne	r4,#0x30,00490$
 00490$:
 	jc	00113$
-	mov	a,r2
+	mov	a,r4
 	add	a,#0xff - 0x39
 	jc	00113$
-;	main.c:224: digit = ch - '0';
+;	main.c:340: digit = ch - '0';
 	mov	a,r1
 	add	a,#0xd0
 	mov	r1,a
-	mov	a,r3
+	mov	a,r5
 	addc	a,#0xff
-	mov	r3,a
+	mov	r5,a
 	sjmp	00114$
 00113$:
-;	main.c:225: } else if ((ch >= 'A') && (ch <= 'F')) {
-	cjne	r2,#0x41,00493$
+;	main.c:341: } else if ((ch >= 'A') && (ch <= 'F')) {
+	cjne	r4,#0x41,00493$
 00493$:
 	jc	00109$
-	mov	a,r2
+	mov	a,r4
 	add	a,#0xff - 0x46
 	jc	00109$
-;	main.c:226: digit = ch - 7 - '0';
-	mov	ar0,r2
-	mov	r5,#0x00
+;	main.c:342: digit = ch - 7 - '0';
+	mov	ar0,r4
+	mov	r3,#0x00
 	mov	a,r0
 	add	a,#0xc9
 	mov	r1,a
-	mov	a,r5
+	mov	a,r3
 	addc	a,#0xff
-	mov	r3,a
+	mov	r5,a
 	sjmp	00114$
 00109$:
-;	main.c:227: } else if ((ch >= 'a') && (ch <= 'f')) {
-	cjne	r2,#0x61,00496$
+;	main.c:343: } else if ((ch >= 'a') && (ch <= 'f')) {
+	cjne	r4,#0x61,00496$
 00496$:
 	jc	00105$
-	mov	a,r2
+	mov	a,r4
 	add	a,#0xff - 0x66
 	jc	00105$
-;	main.c:228: digit = ch - 32 - 7 - '0';
-	mov	r5,#0x00
-	mov	a,r2
+;	main.c:344: digit = ch - 32 - 7 - '0';
+	mov	r3,#0x00
+	mov	a,r4
 	add	a,#0xa9
 	mov	r1,a
-	mov	a,r5
+	mov	a,r3
 	addc	a,#0xff
-	mov	r3,a
+	mov	r5,a
 	sjmp	00114$
 00105$:
-;	main.c:230: printf("Invalid input. Please enter 0-9, A-F or a-f only.\r\n");
+;	main.c:346: printf("Invalid input. Please enter 0-9, A-F or a-f only.\r\n");
 	mov	a,#___str_8
 	push	acc
 	mov	a,#(___str_8 >> 8)
@@ -1274,32 +1621,32 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:231: return;
+;	main.c:347: return;
 	ret
 00114$:
-;	main.c:233: addr = addr * 16 + digit;
-	mov	ar4,r6
+;	main.c:349: addr = addr * 16 + digit;
+	mov	ar3,r6
 	mov	a,r7
 	swap	a
 	anl	a,#0xf0
-	xch	a,r4
+	xch	a,r3
 	swap	a
-	xch	a,r4
-	xrl	a,r4
-	xch	a,r4
+	xch	a,r3
+	xrl	a,r3
+	xch	a,r3
 	anl	a,#0xf0
-	xch	a,r4
-	xrl	a,r4
-	mov	r5,a
+	xch	a,r3
+	xrl	a,r3
+	mov	r4,a
 	mov	a,r1
-	add	a,r4
+	add	a,r3
 	mov	r6,a
-	mov	a,r3
-	addc	a,r5
+	mov	a,r5
+	addc	a,r4
 	mov	r7,a
 	ljmp	00117$
 00118$:
-;	main.c:237: printf("Entered address: 0x%x\r\n", addr);
+;	main.c:353: printf("Entered address: 0x%x\r\n", addr);
 	push	ar7
 	push	ar6
 	push	ar6
@@ -1316,14 +1663,14 @@ _main:
 	mov	sp,a
 	pop	ar6
 	pop	ar7
-;	main.c:240: if ((addr < 0x0) || (addr > 0x7FF)) {
+;	main.c:356: if ((addr < 0x0) || (addr > 0x7FF)) {
 	clr	c
 	mov	a,#0xff
 	subb	a,r6
 	mov	a,#0x07
 	subb	a,r7
 	jnc	00120$
-;	main.c:241: printf("Invalid buffer address. The address should be between 0 and 7FF.\r\n");
+;	main.c:357: printf("Invalid buffer address. The address should be between 0 and 7FF.\r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_10
@@ -1338,10 +1685,10 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:242: break;
+;	main.c:358: break;
 	ljmp	00212$
 00120$:
-;	main.c:245: printf("Enter the data byte to write:\r\n");
+;	main.c:361: printf("Enter the data byte to write:\r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_11
@@ -1356,71 +1703,71 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:247: while (1) {
+;	main.c:363: while (1) {
 00137$:
-;	main.c:248: ch = getchar();
+;	main.c:364: ch = getchar();
 	push	ar7
 	push	ar6
 	lcall	_getchar
 	mov	r4,dpl
 	pop	ar6
 	pop	ar7
-;	main.c:250: if ((int)ch == 13) { // Check until carriage return
+;	main.c:366: if ((int)ch == 13) { // Check until carriage return
 	mov	ar3,r4
 	mov	r5,#0x00
 	cjne	r3,#0x0d,00500$
 	cjne	r5,#0x00,00500$
 	sjmp	00138$
 00500$:
-;	main.c:254: if ((ch >= '0') && (ch <= '9')) {
+;	main.c:370: if ((ch >= '0') && (ch <= '9')) {
 	cjne	r4,#0x30,00501$
 00501$:
 	jc	00133$
 	mov	a,r4
 	add	a,#0xff - 0x39
 	jc	00133$
-;	main.c:255: digit = ch - '0';
+;	main.c:371: digit = ch - '0';
 	mov	a,r3
 	add	a,#0xd0
-	mov	r2,a
+	mov	r1,a
 	mov	a,r5
 	addc	a,#0xff
-	mov	r1,a
+	mov	r2,a
 	sjmp	00134$
 00133$:
-;	main.c:256: } else if ((ch >= 'A') && (ch <= 'F')) {
+;	main.c:372: } else if ((ch >= 'A') && (ch <= 'F')) {
 	cjne	r4,#0x41,00504$
 00504$:
 	jc	00129$
 	mov	a,r4
 	add	a,#0xff - 0x46
 	jc	00129$
-;	main.c:257: digit = ch - 7 - '0';
+;	main.c:373: digit = ch - 7 - '0';
 	mov	a,r3
 	add	a,#0xc9
-	mov	r2,a
+	mov	r1,a
 	mov	a,r5
 	addc	a,#0xff
-	mov	r1,a
+	mov	r2,a
 	sjmp	00134$
 00129$:
-;	main.c:258: } else if ((ch >= 'a') && (ch <= 'f')) {
+;	main.c:374: } else if ((ch >= 'a') && (ch <= 'f')) {
 	cjne	r4,#0x61,00507$
 00507$:
 	jc	00125$
 	mov	a,r4
 	add	a,#0xff - 0x66
 	jc	00125$
-;	main.c:259: digit = ch - 32 - 7 - '0';
+;	main.c:375: digit = ch - 32 - 7 - '0';
 	mov	a,r3
 	add	a,#0xa9
-	mov	r2,a
+	mov	r1,a
 	mov	a,r5
 	addc	a,#0xff
-	mov	r1,a
+	mov	r2,a
 	sjmp	00134$
 00125$:
-;	main.c:261: printf("Invalid input. Please enter 0-9, A-F or a-f only.\r\n");
+;	main.c:377: printf("Invalid input. Please enter 0-9, A-F or a-f only.\r\n");
 	mov	a,#___str_8
 	push	acc
 	mov	a,#(___str_8 >> 8)
@@ -1431,12 +1778,12 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:262: return;
+;	main.c:378: return;
 	ret
 00134$:
-;	main.c:264: data = data * 16 + digit;
-	mov	r4,_main_data_131072_47
-	mov	a,(_main_data_131072_47 + 1)
+;	main.c:380: data = data * 16 + digit;
+	mov	r4,_main_data_131072_92
+	mov	a,(_main_data_131072_92 + 1)
 	swap	a
 	anl	a,#0xf0
 	xch	a,r4
@@ -1448,19 +1795,19 @@ _main:
 	xch	a,r4
 	xrl	a,r4
 	mov	r5,a
-	mov	a,r2
-	add	a,r4
-	mov	_main_data_131072_47,a
 	mov	a,r1
+	add	a,r4
+	mov	_main_data_131072_92,a
+	mov	a,r2
 	addc	a,r5
-	mov	(_main_data_131072_47 + 1),a
+	mov	(_main_data_131072_92 + 1),a
 	ljmp	00137$
 00138$:
-;	main.c:268: printf("Entered data: 0x%x\r\n", data);
+;	main.c:384: printf("Entered data: 0x%x\r\n", data);
 	push	ar7
 	push	ar6
-	push	_main_data_131072_47
-	push	(_main_data_131072_47 + 1)
+	push	_main_data_131072_92
+	push	(_main_data_131072_92 + 1)
 	mov	a,#___str_12
 	push	acc
 	mov	a,#(___str_12 >> 8)
@@ -1473,14 +1820,14 @@ _main:
 	mov	sp,a
 	pop	ar6
 	pop	ar7
-;	main.c:271: if ((data < 0x0) || (data > 0xFF)) {
+;	main.c:387: if ((data < 0x0) || (data > 0xFF)) {
 	clr	c
 	mov	a,#0xff
-	subb	a,_main_data_131072_47
+	subb	a,_main_data_131072_92
 	clr	a
-	subb	a,(_main_data_131072_47 + 1)
+	subb	a,(_main_data_131072_92 + 1)
 	jnc	00140$
-;	main.c:272: printf("Invalid buffer data. The data should be between 0 and FF.\r\n");
+;	main.c:388: printf("Invalid buffer data. The data should be between 0 and FF.\r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_13
@@ -1495,11 +1842,11 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:273: break;
+;	main.c:389: break;
 	ljmp	00212$
 00140$:
-;	main.c:276: eebytew(addr, data);
-	mov	_eebytew_PARM_2,_main_data_131072_47
+;	main.c:392: eebytew(addr, data);
+	mov	_eebytew_PARM_2,_main_data_131072_92
 	mov	dpl,r6
 	mov	dph,r7
 	push	ar7
@@ -1507,11 +1854,11 @@ _main:
 	lcall	_eebytew
 	pop	ar6
 	pop	ar7
-;	main.c:277: break;
+;	main.c:393: break;
 	ljmp	00212$
-;	main.c:280: case 'r':
+;	main.c:396: case 'r':
 00142$:
-;	main.c:281: printf("Enter the address location to read the data from : \r\n");
+;	main.c:397: printf("Enter the address location to read the data from : \r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_14
@@ -1526,30 +1873,30 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:282: while (1) {
+;	main.c:398: while (1) {
 00158$:
-;	main.c:283: ch = getchar();
+;	main.c:399: ch = getchar();
 	push	ar7
 	push	ar6
 	lcall	_getchar
 	mov	r4,dpl
 	pop	ar6
 	pop	ar7
-;	main.c:285: if ((int)ch == 13) { // Check until carriage return
+;	main.c:401: if ((int)ch == 13) { // Check until carriage return
 	mov	ar3,r4
 	mov	r5,#0x00
 	cjne	r3,#0x0d,00511$
 	cjne	r5,#0x00,00511$
 	sjmp	00159$
 00511$:
-;	main.c:289: if ((ch >= '0') && (ch <= '9')) {
+;	main.c:405: if ((ch >= '0') && (ch <= '9')) {
 	cjne	r4,#0x30,00512$
 00512$:
 	jc	00154$
 	mov	a,r4
 	add	a,#0xff - 0x39
 	jc	00154$
-;	main.c:290: digit = ch - '0';
+;	main.c:406: digit = ch - '0';
 	mov	a,r3
 	add	a,#0xd0
 	mov	r1,a
@@ -1558,14 +1905,14 @@ _main:
 	mov	r2,a
 	sjmp	00155$
 00154$:
-;	main.c:291: } else if ((ch >= 'A') && (ch <= 'F')) {
+;	main.c:407: } else if ((ch >= 'A') && (ch <= 'F')) {
 	cjne	r4,#0x41,00515$
 00515$:
 	jc	00150$
 	mov	a,r4
 	add	a,#0xff - 0x46
 	jc	00150$
-;	main.c:292: digit = ch - 7 - '0';
+;	main.c:408: digit = ch - 7 - '0';
 	mov	a,r3
 	add	a,#0xc9
 	mov	r1,a
@@ -1574,14 +1921,14 @@ _main:
 	mov	r2,a
 	sjmp	00155$
 00150$:
-;	main.c:293: } else if ((ch >= 'a') && (ch <= 'f')) {
+;	main.c:409: } else if ((ch >= 'a') && (ch <= 'f')) {
 	cjne	r4,#0x61,00518$
 00518$:
 	jc	00146$
 	mov	a,r4
 	add	a,#0xff - 0x66
 	jc	00146$
-;	main.c:294: digit = ch - 32 - 7 - '0';
+;	main.c:410: digit = ch - 32 - 7 - '0';
 	mov	a,r3
 	add	a,#0xa9
 	mov	r1,a
@@ -1590,7 +1937,7 @@ _main:
 	mov	r2,a
 	sjmp	00155$
 00146$:
-;	main.c:296: printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
+;	main.c:412: printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
 	mov	a,#___str_15
 	push	acc
 	mov	a,#(___str_15 >> 8)
@@ -1601,12 +1948,12 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:297: return;
+;	main.c:413: return;
 	ret
 00155$:
-;	main.c:299: addr = addr * 16 + digit;
-	mov	ar4,r6
-	mov	a,r7
+;	main.c:415: addr1 = addr1 * 16 + digit;
+	mov	r4,_main_addr1_131072_92
+	mov	a,(_main_addr1_131072_92 + 1)
 	swap	a
 	anl	a,#0xf0
 	xch	a,r4
@@ -1620,17 +1967,17 @@ _main:
 	mov	r5,a
 	mov	a,r1
 	add	a,r4
-	mov	r6,a
+	mov	_main_addr1_131072_92,a
 	mov	a,r2
 	addc	a,r5
-	mov	r7,a
+	mov	(_main_addr1_131072_92 + 1),a
 	ljmp	00158$
 00159$:
-;	main.c:303: printf("Entered address: 0x%x\r\n", addr);
+;	main.c:419: printf("Entered address: 0x%x\r\n", addr1);
 	push	ar7
 	push	ar6
-	push	ar6
-	push	ar7
+	push	_main_addr1_131072_92
+	push	(_main_addr1_131072_92 + 1)
 	mov	a,#___str_9
 	push	acc
 	mov	a,#(___str_9 >> 8)
@@ -1643,14 +1990,14 @@ _main:
 	mov	sp,a
 	pop	ar6
 	pop	ar7
-;	main.c:306: if ((addr < 0x0) || (addr > 0x7FF)) {
+;	main.c:422: if ((addr1 < 0x0) || (addr1 > 0x7FF)) {
 	clr	c
 	mov	a,#0xff
-	subb	a,r6
+	subb	a,_main_addr1_131072_92
 	mov	a,#0x07
-	subb	a,r7
+	subb	a,(_main_addr1_131072_92 + 1)
 	jnc	00161$
-;	main.c:307: printf("Invalid buffer address. The address should be between 0 and 7FF.\r\n");
+;	main.c:423: printf("Invalid buffer address. The address should be between 0 and 7FF.\r\n");
 	mov	a,#___str_10
 	push	acc
 	mov	a,#(___str_10 >> 8)
@@ -1661,17 +2008,17 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:308: return;
+;	main.c:424: return;
 	ret
 00161$:
-;	main.c:310: unsigned char rd = eebyter(addr);
-	mov	dpl,r6
-	mov	dph,r7
+;	main.c:426: unsigned char rd = eebyter(addr1);
+	mov	dpl,_main_addr1_131072_92
+	mov	dph,(_main_addr1_131072_92 + 1)
 	push	ar7
 	push	ar6
 	lcall	_eebyter
 	mov	r5,dpl
-;	main.c:311: printf("read data: 0x%x\r\n", rd);
+;	main.c:427: printf("read data: 0x%x\r\n", rd);
 	mov	r4,#0x00
 	push	ar5
 	push	ar4
@@ -1687,11 +2034,11 @@ _main:
 	mov	sp,a
 	pop	ar6
 	pop	ar7
-;	main.c:312: break;
+;	main.c:428: break;
 	ljmp	00212$
-;	main.c:314: case 'h':
+;	main.c:430: case 'h':
 00163$:
-;	main.c:315: printf("Enter the start address for dump:\r\n");
+;	main.c:431: printf("Enter the start address for dump:\r\n");
 	mov	a,#___str_17
 	push	acc
 	mov	a,#(___str_17 >> 8)
@@ -1702,70 +2049,70 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:316: while (1) {
+;	main.c:432: while (1) {
 00179$:
-;	main.c:317: ch = getchar();
+;	main.c:433: ch = getchar();
 	lcall	_getchar
 	mov	r4,dpl
-;	main.c:319: if ((int)ch == 13) { // Check until carriage return
-	mov	ar3,r4
-	mov	r5,#0x00
-	cjne	r3,#0x0d,00522$
-	cjne	r5,#0x00,00522$
+;	main.c:435: if ((int)ch == 13) { // Check until carriage return
+	mov	ar5,r4
+	mov	r3,#0x00
+	cjne	r5,#0x0d,00522$
+	cjne	r3,#0x00,00522$
 	sjmp	00180$
 00522$:
-;	main.c:323: if ((ch >= '0') && (ch <= '9')) {
+;	main.c:439: if ((ch >= '0') && (ch <= '9')) {
 	cjne	r4,#0x30,00523$
 00523$:
 	jc	00175$
 	mov	a,r4
 	add	a,#0xff - 0x39
 	jc	00175$
-;	main.c:324: digit = ch - '0';
-	mov	a,r3
-	add	a,#0xd0
-	mov	r3,a
+;	main.c:440: digit = ch - '0';
 	mov	a,r5
-	addc	a,#0xff
+	add	a,#0xd0
 	mov	r5,a
+	mov	a,r3
+	addc	a,#0xff
+	mov	r3,a
 	sjmp	00176$
 00175$:
-;	main.c:325: } else if ((ch >= 'A') && (ch <= 'F')) {
+;	main.c:441: } else if ((ch >= 'A') && (ch <= 'F')) {
 	cjne	r4,#0x41,00526$
 00526$:
 	jc	00171$
 	mov	a,r4
 	add	a,#0xff - 0x46
 	jc	00171$
-;	main.c:326: digit = ch - 7 - '0';
+;	main.c:442: digit = ch - 7 - '0';
 	mov	ar1,r4
 	mov	r2,#0x00
 	mov	a,r1
 	add	a,#0xc9
-	mov	r3,a
+	mov	r5,a
 	mov	a,r2
 	addc	a,#0xff
-	mov	r5,a
+	mov	r3,a
 	sjmp	00176$
 00171$:
-;	main.c:327: } else if ((ch >= 'a') && (ch <= 'f')) {
+;	main.c:443: } else if ((ch >= 'a') && (ch <= 'f')) {
 	cjne	r4,#0x61,00529$
 00529$:
 	jc	00167$
 	mov	a,r4
 	add	a,#0xff - 0x66
 	jc	00167$
-;	main.c:328: digit = ch - 32 - 7 - '0';
+;	main.c:444: digit = ch - 32 - 7 - '0';
 	mov	r2,#0x00
 	mov	a,r4
 	add	a,#0xa9
-	mov	r3,a
+	mov	r5,a
 	mov	a,r2
 	addc	a,#0xff
-	mov	r5,a
+	mov	r3,a
 	sjmp	00176$
 00167$:
-;	main.c:330: printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
+;	main.c:446: printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
 	mov	a,#___str_15
 	push	acc
 	mov	a,#(___str_15 >> 8)
@@ -1776,34 +2123,34 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:331: return;
+;	main.c:447: return;
 	ret
 00176$:
-;	main.c:333: start_addr = start_addr * 16 + digit;
-	mov	r4,_main_start_addr_131072_47
-	mov	a,(_main_start_addr_131072_47 + 1)
+;	main.c:449: start_addr = start_addr * 16 + digit;
+	mov	r2,_main_start_addr_131072_92
+	mov	a,(_main_start_addr_131072_92 + 1)
 	swap	a
 	anl	a,#0xf0
-	xch	a,r4
+	xch	a,r2
 	swap	a
-	xch	a,r4
-	xrl	a,r4
-	xch	a,r4
+	xch	a,r2
+	xrl	a,r2
+	xch	a,r2
 	anl	a,#0xf0
-	xch	a,r4
-	xrl	a,r4
-	mov	r2,a
-	mov	a,r3
-	add	a,r4
-	mov	_main_start_addr_131072_47,a
+	xch	a,r2
+	xrl	a,r2
+	mov	r4,a
 	mov	a,r5
-	addc	a,r2
-	mov	(_main_start_addr_131072_47 + 1),a
+	add	a,r2
+	mov	_main_start_addr_131072_92,a
+	mov	a,r3
+	addc	a,r4
+	mov	(_main_start_addr_131072_92 + 1),a
 	ljmp	00179$
 00180$:
-;	main.c:337: printf("Entered start address: 0x%x\r\n", start_addr);
-	push	_main_start_addr_131072_47
-	push	(_main_start_addr_131072_47 + 1)
+;	main.c:453: printf("Entered start address: 0x%x\r\n", start_addr);
+	push	_main_start_addr_131072_92
+	push	(_main_start_addr_131072_92 + 1)
 	mov	a,#___str_18
 	push	acc
 	mov	a,#(___str_18 >> 8)
@@ -1814,14 +2161,14 @@ _main:
 	mov	a,sp
 	add	a,#0xfb
 	mov	sp,a
-;	main.c:340: if ((start_addr < 0x0) || (start_addr > 0x7FF)) {
+;	main.c:456: if ((start_addr < 0x0) || (start_addr > 0x7FF)) {
 	clr	c
 	mov	a,#0xff
-	subb	a,_main_start_addr_131072_47
+	subb	a,_main_start_addr_131072_92
 	mov	a,#0x07
-	subb	a,(_main_start_addr_131072_47 + 1)
+	subb	a,(_main_start_addr_131072_92 + 1)
 	jnc	00182$
-;	main.c:341: printf("Invalid start address. The address should be between 0 and 7FF.\r\n");
+;	main.c:457: printf("Invalid start address. The address should be between 0 and 7FF.\r\n");
 	mov	a,#___str_19
 	push	acc
 	mov	a,#(___str_19 >> 8)
@@ -1832,10 +2179,10 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:342: return;
+;	main.c:458: return;
 	ret
 00182$:
-;	main.c:345: printf("Enter the end address for dump:\r\n");
+;	main.c:461: printf("Enter the end address for dump:\r\n");
 	mov	a,#___str_20
 	push	acc
 	mov	a,#(___str_20 >> 8)
@@ -1846,26 +2193,26 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:346: while (1) {
+;	main.c:462: while (1) {
 00199$:
-;	main.c:347: ch = getchar();
+;	main.c:463: ch = getchar();
 	lcall	_getchar
 	mov	r4,dpl
-;	main.c:349: if ((int)ch == 13) { // Check until carriage return
+;	main.c:465: if ((int)ch == 13) { // Check until carriage return
 	mov	ar3,r4
 	mov	r5,#0x00
 	cjne	r3,#0x0d,00533$
 	cjne	r5,#0x00,00533$
 	sjmp	00200$
 00533$:
-;	main.c:353: if ((ch >= '0') && (ch <= '9')) {
+;	main.c:469: if ((ch >= '0') && (ch <= '9')) {
 	cjne	r4,#0x30,00534$
 00534$:
 	jc	00195$
 	mov	a,r4
 	add	a,#0xff - 0x39
 	jc	00195$
-;	main.c:354: digit = ch - '0';
+;	main.c:470: digit = ch - '0';
 	mov	a,r3
 	add	a,#0xd0
 	mov	r2,a
@@ -1874,14 +2221,14 @@ _main:
 	mov	r1,a
 	sjmp	00196$
 00195$:
-;	main.c:355: } else if ((ch >= 'A') && (ch <= 'F')) {
+;	main.c:471: } else if ((ch >= 'A') && (ch <= 'F')) {
 	cjne	r4,#0x41,00537$
 00537$:
 	jc	00191$
 	mov	a,r4
 	add	a,#0xff - 0x46
 	jc	00191$
-;	main.c:356: digit = ch - 7 - '0';
+;	main.c:472: digit = ch - 7 - '0';
 	mov	a,r3
 	add	a,#0xc9
 	mov	r2,a
@@ -1890,14 +2237,14 @@ _main:
 	mov	r1,a
 	sjmp	00196$
 00191$:
-;	main.c:357: } else if ((ch >= 'a') && (ch <= 'f')) {
+;	main.c:473: } else if ((ch >= 'a') && (ch <= 'f')) {
 	cjne	r4,#0x61,00540$
 00540$:
 	jc	00187$
 	mov	a,r4
 	add	a,#0xff - 0x66
 	jc	00187$
-;	main.c:358: digit = ch - 32 - 7 - '0';
+;	main.c:474: digit = ch - 32 - 7 - '0';
 	mov	a,r3
 	add	a,#0xa9
 	mov	r2,a
@@ -1906,7 +2253,7 @@ _main:
 	mov	r1,a
 	sjmp	00196$
 00187$:
-;	main.c:360: printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
+;	main.c:476: printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
 	mov	a,#___str_15
 	push	acc
 	mov	a,#(___str_15 >> 8)
@@ -1917,12 +2264,12 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:361: return;
+;	main.c:477: return;
 	ret
 00196$:
-;	main.c:363: end_addr = end_addr * 16 + digit;
-	mov	r4,_main_end_addr_131072_47
-	mov	a,(_main_end_addr_131072_47 + 1)
+;	main.c:479: end_addr = end_addr * 16 + digit;
+	mov	r4,_main_end_addr_131072_92
+	mov	a,(_main_end_addr_131072_92 + 1)
 	swap	a
 	anl	a,#0xf0
 	xch	a,r4
@@ -1936,15 +2283,15 @@ _main:
 	mov	r5,a
 	mov	a,r2
 	add	a,r4
-	mov	_main_end_addr_131072_47,a
+	mov	_main_end_addr_131072_92,a
 	mov	a,r1
 	addc	a,r5
-	mov	(_main_end_addr_131072_47 + 1),a
+	mov	(_main_end_addr_131072_92 + 1),a
 	sjmp	00199$
 00200$:
-;	main.c:367: printf("Entered end address: 0x%x\r\n", end_addr);
-	push	_main_end_addr_131072_47
-	push	(_main_end_addr_131072_47 + 1)
+;	main.c:483: printf("Entered end address: 0x%x\r\n", end_addr);
+	push	_main_end_addr_131072_92
+	push	(_main_end_addr_131072_92 + 1)
 	mov	a,#___str_21
 	push	acc
 	mov	a,#(___str_21 >> 8)
@@ -1955,20 +2302,20 @@ _main:
 	mov	a,sp
 	add	a,#0xfb
 	mov	sp,a
-;	main.c:370: if ((end_addr < 0x0) || (end_addr > 0x7FF) || (end_addr < start_addr)) {
+;	main.c:486: if ((end_addr < 0x0) || (end_addr > 0x7FF) || (end_addr < start_addr)) {
 	clr	c
 	mov	a,#0xff
-	subb	a,_main_end_addr_131072_47
+	subb	a,_main_end_addr_131072_92
 	mov	a,#0x07
-	subb	a,(_main_end_addr_131072_47 + 1)
+	subb	a,(_main_end_addr_131072_92 + 1)
 	jc	00201$
-	mov	a,_main_end_addr_131072_47
-	subb	a,_main_start_addr_131072_47
-	mov	a,(_main_end_addr_131072_47 + 1)
-	subb	a,(_main_start_addr_131072_47 + 1)
+	mov	a,_main_end_addr_131072_92
+	subb	a,_main_start_addr_131072_92
+	mov	a,(_main_end_addr_131072_92 + 1)
+	subb	a,(_main_start_addr_131072_92 + 1)
 	jnc	00202$
 00201$:
-;	main.c:371: printf("Invalid end address. The address should be between 0-7FF and more than the start address.\r\n");
+;	main.c:487: printf("Invalid end address. The address should be between 0-7FF and more than the start address.\r\n");
 	mov	a,#___str_22
 	push	acc
 	mov	a,#(___str_22 >> 8)
@@ -1979,12 +2326,12 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:372: return;
+;	main.c:488: return;
 	ret
 00202$:
-;	main.c:375: printf("%x:", start_addr);
-	push	_main_start_addr_131072_47
-	push	(_main_start_addr_131072_47 + 1)
+;	main.c:491: printf("%x:", start_addr);
+	push	_main_start_addr_131072_92
+	push	(_main_start_addr_131072_92 + 1)
 	mov	a,#___str_23
 	push	acc
 	mov	a,#(___str_23 >> 8)
@@ -1995,16 +2342,16 @@ _main:
 	mov	a,sp
 	add	a,#0xfb
 	mov	sp,a
-;	main.c:377: for (int i=0; i<end_addr - start_addr; i++)
-	mov	a,_main_end_addr_131072_47
+;	main.c:493: for (int i=0; i<end_addr - start_addr; i++)
+	mov	a,_main_end_addr_131072_92
 	clr	c
-	subb	a,_main_start_addr_131072_47
+	subb	a,_main_start_addr_131072_92
 	mov	r4,a
-	mov	a,(_main_end_addr_131072_47 + 1)
-	subb	a,(_main_start_addr_131072_47 + 1)
+	mov	a,(_main_end_addr_131072_92 + 1)
+	subb	a,(_main_start_addr_131072_92 + 1)
 	mov	r5,a
-	mov	_main_addr_131072_47,_main_start_addr_131072_47
-	mov	(_main_addr_131072_47 + 1),(_main_start_addr_131072_47 + 1)
+	mov	_main_addr_131072_92,_main_start_addr_131072_92
+	mov	(_main_addr_131072_92 + 1),(_main_start_addr_131072_92 + 1)
 	mov	r0,#0x00
 	mov	r1,#0x00
 00215$:
@@ -2018,7 +2365,7 @@ _main:
 	jc	00545$
 	ljmp	00272$
 00545$:
-;	main.c:379: if (i > 0 && i % 16 == 0) {
+;	main.c:495: if (i > 0 && i % 16 == 0) {
 	clr	c
 	clr	a
 	subb	a,r0
@@ -2044,7 +2391,7 @@ _main:
 	pop	ar5
 	orl	a,b
 	jnz	00206$
-;	main.c:380: printf("\r\n");  // Start a new line after every 16 bytes
+;	main.c:496: printf("\r\n");  // Start a new line after every 16 bytes
 	push	ar5
 	push	ar4
 	push	ar1
@@ -2059,9 +2406,9 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:381: printf("%x:", addr);
-	push	_main_addr_131072_47
-	push	(_main_addr_131072_47 + 1)
+;	main.c:497: printf("%x:", addr);
+	push	_main_addr_131072_92
+	push	(_main_addr_131072_92 + 1)
 	mov	a,#___str_23
 	push	acc
 	mov	a,#(___str_23 >> 8)
@@ -2077,9 +2424,9 @@ _main:
 	pop	ar4
 	pop	ar5
 00206$:
-;	main.c:383: printf("%x ", eebyter(addr));
-	mov	dpl,_main_addr_131072_47
-	mov	dph,(_main_addr_131072_47 + 1)
+;	main.c:499: printf("%x ", eebyter(addr));
+	mov	dpl,_main_addr_131072_92
+	mov	dph,(_main_addr_131072_92 + 1)
 	push	ar5
 	push	ar4
 	push	ar1
@@ -2103,22 +2450,22 @@ _main:
 	pop	ar1
 	pop	ar4
 	pop	ar5
-;	main.c:384: addr += 1;
-	inc	_main_addr_131072_47
+;	main.c:500: addr += 1;
+	inc	_main_addr_131072_92
 	clr	a
-	cjne	a,_main_addr_131072_47,00548$
-	inc	(_main_addr_131072_47 + 1)
+	cjne	a,_main_addr_131072_92,00548$
+	inc	(_main_addr_131072_92 + 1)
 00548$:
-;	main.c:377: for (int i=0; i<end_addr - start_addr; i++)
+;	main.c:493: for (int i=0; i<end_addr - start_addr; i++)
 	inc	r0
 	cjne	r0,#0x00,00549$
 	inc	r1
 00549$:
 	ljmp	00215$
 00272$:
-	mov	r6,_main_addr_131072_47
-	mov	r7,(_main_addr_131072_47 + 1)
-;	main.c:386: printf("\r\n");
+	mov	r6,_main_addr_131072_92
+	mov	r7,(_main_addr_131072_92 + 1)
+;	main.c:502: printf("\r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_6
@@ -2133,11 +2480,11 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:388: break;
+;	main.c:504: break;
 	ljmp	00212$
-;	main.c:395: default:
+;	main.c:511: default:
 00209$:
-;	main.c:396: printf("Invalid input\r\n");
+;	main.c:512: printf("Invalid input\r\n");
 	push	ar7
 	push	ar6
 	mov	a,#___str_25
@@ -2152,8 +2499,8 @@ _main:
 	dec	sp
 	pop	ar6
 	pop	ar7
-;	main.c:399: }
-;	main.c:443: }
+;	main.c:515: }
+;	main.c:559: }
 	ljmp	00212$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

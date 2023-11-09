@@ -169,7 +169,45 @@ void RepeatedStartI2c()
 void eebytew(unsigned int addr, unsigned char databyte)
 {
   I2C_Start();
-  I2C_Write_Byte((unsigned char)0xA0);
+  if(addr <= 0xFF)
+  {
+      I2C_Write_Byte((unsigned char)0xA0);
+  }
+  else{
+    if(addr <= 0x1FF){
+        I2C_Write_Byte((unsigned char)0xA2);
+    }
+    else{
+        if(addr <= 0x2FF){
+            I2C_Write_Byte((unsigned char)0xA4);
+        }
+        else{
+            if(addr <= 0x3FF){
+                I2C_Write_Byte((unsigned char)0xA6);
+            }
+            else{
+                if(addr <= 0x4FF){
+                    I2C_Write_Byte((unsigned char)0xA8);
+                }
+                else{
+                    if(addr <= 0x5FF){
+                        I2C_Write_Byte((unsigned char)0xAA);
+                    }
+                    else{
+                        if(addr <= 0x6FF){
+                            I2C_Write_Byte((unsigned char)0xAC);
+                        }
+                        else{
+                            if(addr <= 0x7FF){
+                                I2C_Write_Byte((unsigned char)0xAE);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
   I2C_Write_Byte((unsigned char)addr);
   I2C_Write_Byte(databyte);
   I2C_Stop();
@@ -180,10 +218,88 @@ unsigned char eebyter(unsigned int addr)
 {
   unsigned char rec;
   I2C_Start();
-  I2C_Write_Byte((unsigned char)0xA0);
+  if(addr <= 0xFF)
+  {
+      I2C_Write_Byte((unsigned char)0xA0);
+  }
+  else{
+    if(addr <= 0x1FF){
+        I2C_Write_Byte((unsigned char)0xA2);
+    }
+    else{
+        if(addr <= 0x2FF){
+            I2C_Write_Byte((unsigned char)0xA4);
+        }
+        else{
+            if(addr <= 0x3FF){
+                I2C_Write_Byte((unsigned char)0xA6);
+            }
+            else{
+                if(addr <= 0x4FF){
+                    I2C_Write_Byte((unsigned char)0xA8);
+                }
+                else{
+                    if(addr <= 0x5FF){
+                        I2C_Write_Byte((unsigned char)0xAA);
+                    }
+                    else{
+                        if(addr <= 0x6FF){
+                            I2C_Write_Byte((unsigned char)0xAC);
+                        }
+                        else{
+                            if(addr <= 0x7FF){
+                                I2C_Write_Byte((unsigned char)0xAE);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
+  //I2C_Write_Byte((unsigned char)0xA0);
   I2C_Write_Byte((unsigned char)addr);
   RepeatedStartI2c();
-  I2C_Write_Byte((unsigned char)0xA1);
+  if(addr <= 0xFF)
+  {
+      I2C_Write_Byte((unsigned char)0xA1);
+  }
+  else{
+    if(addr <= 0x1FF){
+        I2C_Write_Byte((unsigned char)0xA3);
+    }
+    else{
+        if(addr <= 0x2FF){
+            I2C_Write_Byte((unsigned char)0xA5);
+        }
+        else{
+            if(addr <= 0x3FF){
+                I2C_Write_Byte((unsigned char)0xA7);
+            }
+            else{
+                if(addr <= 0x4FF){
+                    I2C_Write_Byte((unsigned char)0xA9);
+                }
+                else{
+                    if(addr <= 0x5FF){
+                        I2C_Write_Byte((unsigned char)0xAB);
+                    }
+                    else{
+                        if(addr <= 0x6FF){
+                            I2C_Write_Byte((unsigned char)0xAD);
+                        }
+                        else{
+                            if(addr <= 0x7FF){
+                                I2C_Write_Byte((unsigned char)0xAF);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  }
+  //I2C_Write_Byte((unsigned char)0xA1);
   rec=I2C_Read_Byte();
   I2C_Send_ACK();
   I2C_Stop();
@@ -203,7 +319,7 @@ void main(void)
 
 while(1)
 {
-    unsigned int addr, start_addr, end_addr = 0;
+    unsigned int addr, addr1, start_addr, end_addr = 0;
     unsigned int data = 0;
     int digit = 0;
     char ch = getchar();
@@ -296,18 +412,18 @@ while(1)
                     printf("Invalid input. Please enter 0-9, A-F or a-f.\r\n");
                     return;
                 }
-                addr = addr * 16 + digit;
+                addr1 = addr1 * 16 + digit;
 
             }
 
-            printf("Entered address: 0x%x\r\n", addr);
+            printf("Entered address: 0x%x\r\n", addr1);
 
             // Check if the address is within the valid range
-            if ((addr < 0x0) || (addr > 0x7FF)) {
+            if ((addr1 < 0x0) || (addr1 > 0x7FF)) {
                 printf("Invalid buffer address. The address should be between 0 and 7FF.\r\n");
                 return;
             }
-            unsigned char rd = eebyter(addr);
+            unsigned char rd = eebyter(addr1);
             printf("read data: 0x%x\r\n", rd);
             break;
 
