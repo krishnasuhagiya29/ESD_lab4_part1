@@ -1,0 +1,21 @@
+-muwx
+-i bin\Release\krishna_lab4_part1.ihx
+-M
+-X 0x8000
+-C 0x8000
+-b HOME = 0x3000
+-b XSEG = 0x0400
+-b PSEG = 0x0400
+-b ISEG = 0x0000
+-b BSEG = 0x0000
+-k C:\Program Files\sdcc\lib
+-k C:\Program Files\lib
+-k C:\Program Files\SDCC\bin\..\lib\small
+-l mcs51
+-l libsdcc
+-l libint
+-l liblong
+-l libfloat
+obj\Release\main.rel
+
+-e
