@@ -110,12 +110,12 @@ unsigned char I2C_Read_Byte(void)
 }
 
 //Function : I2C_Send_ACK sends ACK bit sequence
-void I2C_Send_ACK(void)
+void I2C_Send_NACK(void)
 {
 	set_SCL_low;				// Make SCL pin low
 	delay(50);	// Data pin should change it's value,
 								// when it is confirm that SCL is low
-	set_SDA_high;				// Make SDA Low
+	set_SDA_low;				// Make SDA Low
 	delay(50);	// 1/4 bit delay
 	set_SCL_high;				// Make SCL pin high
 	delay(50);	// Half bit delay
@@ -164,6 +164,23 @@ void RepeatedStartI2c()
     delay(50);
     SDA  = 0;
     delay(50);
+}
+
+void eereset()
+{
+    int i;
+    I2C_Start();
+    for (i=0;i<9; i++)
+    {
+        SCL = 0;
+        delay(50);
+        SDA = 1;
+        delay(50);
+        SCL = 1;
+        delay(50);
+    }
+    I2C_Start();
+    I2C_Stop();
 }
 
 void eebytew(unsigned int addr, unsigned char databyte)
@@ -301,7 +318,7 @@ unsigned char eebyter(unsigned int addr)
   }
   //I2C_Write_Byte((unsigned char)0xA1);
   rec=I2C_Read_Byte();
-  I2C_Send_ACK();
+  I2C_Send_NACK();
   I2C_Stop();
   return rec;
 }
@@ -390,6 +407,7 @@ while(1)
             }
 
             eebytew(addr, data);
+            addr = 0;
             break;
 
 
@@ -425,6 +443,7 @@ while(1)
             }
             unsigned char rd = eebyter(addr1);
             printf("read data: 0x%x\r\n", rd);
+            addr1 = 0;
             break;
 
         case 'h':
@@ -488,72 +507,33 @@ while(1)
                 return;
             }
 
-            printf("%x:", start_addr);
+            printf("%03x:", start_addr);
             addr = start_addr;
-            for (int i=0; i<end_addr - start_addr; i++)
+            for (int i=0; i<=end_addr - start_addr; i++)
             {
                 if (i > 0 && i % 16 == 0) {
                     printf("\r\n");  // Start a new line after every 16 bytes
-                    printf("%x:", addr);
+                    printf("%03x:", addr);
                 }
                 printf("%x ", eebyter(addr));
                 addr += 1;
             }
             printf("\r\n");
-
+            start_addr = 0;
+            end_addr = 0;
+            addr = 0;
             break;
 
-/*        case '4':
-            printf("You have selected to Reset EEPROM Memory\r\n");
+        case 'e':
+            printf("Resetting EEPROM\r\n");
             eereset();
-            break;*/
+            break;
 
         default:
             printf("Invalid input\r\n");
             break;
 
     }
-#if 0
-	I2C_Start();				// Send start bit on i2c
-	do{
-        ack = I2C_Write_Byte(0xA0);		// Send 0xA0 on i2c
-        printf("here %d\r\n", ack);
-	} while (ack == 1);
-	delay(50);
-	do{
-        ack = I2C_Write_Byte(0xBE);		// Send 0xA0 on i2c
-        printf("here1 %d\r\n", ack);
-	} while (ack == 1);
-	delay(50);
-	do{
-        ack = I2C_Write_Byte(0xDD);		// Send 0xA0 on i2c
-        printf("here2 %d\r\n", ack);
-	} while (ack == 1);
-	delay(50);
-	I2C_Stop();
-#endif
-#if 0
-	I2C_Start();				// Send start bit on i2c
-	do{
-        ack = I2C_Write_Byte(0xA0);		// Send 0xA0 on i2c
-        printf("here3 %d\r\n", ack);
-	} while (ack == 1);
-	do{
-        ack = I2C_Write_Byte(0xBE);		// Send 0xA0 on i2c
-        printf("here4 %d\r\n", ack);
-	} while (ack == 1);
-	RepeatedStartI2c();
-	do{
-        ack = I2C_Write_Byte(0xA1);		// Send 0xA0 on i2c
-        printf("here5 %d\r\n", ack);
-	} while (ack == 1);
-    rx = I2C_Read_Byte();	// Read value from i2c
-    delay(50);
-    I2C_Send_ACK();				// Send ACK bit on i2c
-    delay(50);
-    I2C_Stop();					// Send stop bit on i2c
-    printf("rx 0x%x\r\n", rx);
-#endif
 }
 
 }

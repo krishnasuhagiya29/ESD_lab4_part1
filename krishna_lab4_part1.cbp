@@ -12,9 +12,18 @@
 				<Option object_output="obj/Release/" />
 				<Option type="5" />
 				<Option compiler="sdcc" />
+				<Option projectCompilerOptionsRelation="1" />
+				<Option projectLinkerOptionsRelation="1" />
 				<Compiler>
+					<Add option="--out-fmt-ihx" />
+					<Add option="-mmcs51" />
 					<Add option="--opt-code-size" />
+					<Add option="--std-sdcc99" />
+					<Add option="--verbose" />
 				</Compiler>
+				<Linker>
+					<Add option="--code-loc 0x3000 --code-size 0x8000 --xram-loc 0x0400 --xram-size 0x8000" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>

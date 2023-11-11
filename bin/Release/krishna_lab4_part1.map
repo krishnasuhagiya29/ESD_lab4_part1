@@ -66,11 +66,11 @@ CABS                                00000000    00000000 =           0. bytes (A
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-C:   000003E9  l_CONST                         
+C:   000003FE  l_CONST                         
 C:   00000400  s_PSEG                          
 C:   00000400  s_XISEG                         
 C:   00000400  s_XSEG                          
-C:   000012B0  l_CSEG                          
+C:   00001312  l_CSEG                          
 C:   00003000  s_HOME                          
 C:   00003006  s_GSINIT0                       
 C:   00003009  s_GSINIT1                       
@@ -81,8 +81,8 @@ C:   0000305F  s_GSFINAL
 C:   0000305F  s_GSINIT                        
 C:   0000305F  s_GSINIT5                       
 C:   00003062  s_CSEG                          
-C:   00004312  s_CONST                         
-C:   000046FB  s_XINIT                         
+C:   00004374  s_CONST                         
+C:   00004772  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -477,7 +477,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00003062    000012B0 =        4784. bytes (REL,CON,CODE)
+CSEG                                00003062    00001312 =        4882. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -488,29 +488,31 @@ C:   00003097  _I2C_init                          main
 C:   0000309C  _I2C_Start                         main
 C:   000030AE  _I2C_Write_Byte                    main
 C:   00003114  _I2C_Read_Byte                     main
-C:   00003163  _I2C_Send_ACK                      main
+C:   00003163  _I2C_Send_NACK                     main
 C:   0000317B  _I2C_ReStart                       main
 C:   0000319B  _I2C_Stop                          main
 C:   000031BB  _RepeatedStartI2c                  main
-C:   000031DB  _eebytew                           main
-C:   000032C0  _eebyter                           main
-C:   0000343A  _main                              main
-C:   00003B03  __moduint                          _moduint
-C:   00003B5F  _vprintf                           vprintf
-C:   00003B78  _printf                            vprintf
-C:   00003C39  __print_format                     printf_large
-C:   00004287  _strlen                            _strlen
-C:   0000429F  __mulint                           _mulint
-C:   0000429F  __mulint_dummy                     _mulint
-C:   000042BC  __gptrget                          _gptrget
-C:   000042D8  __modsint                          _modsint
-C:   0000430E  __sdcc_external_startup            _startup
+C:   000031DB  _eereset                           main
+C:   00003218  _eebytew                           main
+C:   000032FD  _eebyter                           main
+C:   00003477  _main                              main
+C:   00003B65  __moduint                          _moduint
+C:   00003BC1  _vprintf                           vprintf
+C:   00003BDA  _printf                            vprintf
+C:   00003C9B  __print_format                     printf_large
+C:   000042E9  _strlen                            _strlen
+C:   00004301  __mulint                           _mulint
+C:   00004301  __mulint_dummy                     _mulint
+C:   0000431E  __gptrget                          _gptrget
+C:   0000433A  __modsint                          _modsint
+C:   00004370  __sdcc_external_startup            _startup
+
 ASxxxx Linker V03.00 + NoICE + sdld,  page 21.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CONST                               00004312    000003E9 =        1001. bytes (REL,CON,CODE)
+CONST                               00004374    000003FE =        1022. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
